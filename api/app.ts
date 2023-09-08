@@ -4,6 +4,7 @@ import userRouter from './src/controllers/user'
 import { DBController } from './src/controllers/DBController'
 import cors from 'cors'
 import { generateData } from './src/dummy_data/batchDataGeneration';
+import DatabaseService from './src/services/database.service';
 
 dotenv.config();
 
@@ -18,18 +19,64 @@ app.use(express.json());
 
 app.use('/user', userRouter);
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello World')
-})
+app.post('/user/login', async (req, res) => {
+    try {
+      const { username, password } = req.body;
 
-app.get('/getDrinks', async (req: Request, res: Response) => {
+      const dbService = new DatabaseService();
+    //   dbService.connect();
+      const data = await dbService.login({username:username, password:password});
+      if(!data?.error){
+        res.status(201).send({username: username});
+      }else{
+        res.status(500).send(data?.error?.originalError?.info);
+      }
+  
+    //   if(!data){
+    //     res.status(500).json({ message: 'An error occurred during authentication' });
+    //   }else if(data.response=201){
+    //     res.json({ message: 'Login successful', data: {username: data.username} });
+    //   }
+
+    } catch (error) {
+      // Handle any errors that occur during authentication
+      console.error('Authentication error:', error);
+      res.status(500).json({ message: 'An error occurred during authentication' });
+    }
+  });
+  
+app.post('/user/register', async (req, res) => {
+  try {
+    const { username, password, email } = req.body;
+
+    const registeredUser = { username:username, password:password, email:email };
+
+    const dbService = new DatabaseService();
+
+    const dataBaseResponse = await dbService.register(registeredUser);
+
+    if(!dataBaseResponse?.error){
+      res.status(201).send({username: username});
+    }else{
+      res.status(500).send(dataBaseResponse?.error?.originalError?.info);
+    }
+
+    // Replace the response with your actual registration logic
+  } catch (error) {
+    // Handle any errors that occur during registration
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'An error occurred during registration' });
+  }
+});
+
+app.get('/drinks', async (req: Request, res: Response) => {
     const query = `SELECT * FROM ${process.env.DATABASE_NAME}.${process.env.TABLE_NAME}`;
     const response = await databaseController.executeQuery(query);
     res.send(response);
 });
 
 //TODO: add validation
-app.get('/getUsersDrinks', async (req: Request, res: Response) => {
+app.post('/usersDrinks', async (req: Request, res: Response) => {
     const username = req?.body?.username;
 
     const query = `SELECT * FROM ${process.env.DATABASE_NAME}.${process.env.TABLE_NAME} WHERE username = '${username}'`;
@@ -38,7 +85,7 @@ app.get('/getUsersDrinks', async (req: Request, res: Response) => {
 });
 
 //TODO: add validation
-app.get('/getTimedDrinks', async (req: Request, res: Response) => {
+app.get('/TimedDrinks', async (req: Request, res: Response) => {
     const time = req?.body?.time;//7d, 24h, 15m, etc
 
     const query = `SELECT * FROM ${process.env.DATABASE_NAME}.${process.env.TABLE_NAME} WHERE time between ago(${time}) and now()`;
@@ -47,7 +94,7 @@ app.get('/getTimedDrinks', async (req: Request, res: Response) => {
 });
 
 //TODO: add validation
-app.get('/getUsersTimedDrinks', async (req: Request, res: Response) => {
+app.get('/UsersTimedDrinks', async (req: Request, res: Response) => {
     const username = req?.body?.username;
     const time = req?.body?.time;//7d, 24h, 15m, etc
 
@@ -56,7 +103,7 @@ app.get('/getUsersTimedDrinks', async (req: Request, res: Response) => {
     res.send(response);
 });
 
-app.post('/postDrink', async (req: Request, res: Response) => {
+app.post('/drink', async (req: Request, res: Response) => {
 
     const data = {
         username: req?.body?.username,
@@ -79,13 +126,6 @@ app.post('/postDrink', async (req: Request, res: Response) => {
     res.send(response);
 });
 
-app.get('/postDummyData', async (req: Request, res: Response) => {
-    const data = await generateData();
-
-    const response = await databaseController.executeBatchWrite(data);
-
-    res.send(response);
-});
 
 app.listen(port, function () {
     console.log(`App is listening on port ${port} !`)

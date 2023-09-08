@@ -6,6 +6,9 @@ import { SharedModule } from '../shared/shared.module';
 import { AlcoholicsComponent } from './alcoholics/alcoholics.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ChartModule } from 'angular-highcharts';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -18,6 +21,9 @@ import { ChartModule } from 'angular-highcharts';
     SharedModule,
     MatTabsModule,
     ChartModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule
   ]
 })
 export class HomeModule { }

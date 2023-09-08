@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeaderConfigModel } from '../models/shared.models';
+import { AuthService } from '../services/auth-service.service';
 
 @Component({
   selector: 'app-register',
@@ -11,7 +12,8 @@ export class RegisterComponent {
   headerConfig!: HeaderConfigModel;
 
   constructor(
-    private router: Router
+    private router: Router,
+    private authService:AuthService
   ){}
 
   ngOnInit(): void {
@@ -25,7 +27,13 @@ export class RegisterComponent {
     }
   }
 
-  register(){
-    this.router.navigate(['/home']);
+  async register(data:any){
+    this.authService.register(data).then((response) => {
+      console.log(response)
+      localStorage.setItem('username',response.username)
+      this.router.navigate(['/home']);
+    }).catch((error) => {
+      console.log(error)
+    })
   }
 }

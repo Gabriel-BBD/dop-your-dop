@@ -26,7 +26,7 @@ export class AuthFormComponent implements OnInit {
     }else{
       this.myForm = this.fb.group({
         name: ['', Validators.required],
-        password: ['', [Validators.required, Validators.email]]
+        password: ['', [Validators.required]]
       });
     }
   }
@@ -34,6 +34,11 @@ export class AuthFormComponent implements OnInit {
   // Define the onSubmit method to handle form submission
   onSubmit() {
     if (this.myForm.valid) {
+      const data = {
+        password:this.myForm.get('password')?.value,
+        username: this.myForm.get('name')?.value,
+        email: this.myForm.get('email')?.value
+      }
       if (this.isRegister) {
         // Check if confirmPassword control exists and compare it to the password control
         if (this.myForm.get('confirmPassword')) {
@@ -52,9 +57,9 @@ export class AuthFormComponent implements OnInit {
   
       // Form is valid, continue with form submission
       console.log('Form submitted:', this.myForm.value);
+      this.userConfirmed.emit(data);
     }
 
-    this.userConfirmed.emit();
     //  for now we will do this then replace
   }
 }

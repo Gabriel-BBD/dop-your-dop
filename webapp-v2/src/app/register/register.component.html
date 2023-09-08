@@ -1,4 +1,4 @@
 <app-header [headerConfig]="headerConfig"></app-header>
 <section class="centre-child w-50" style="height: 60%;">
-    <app-auth-form [isRegister]="true" (userConfirmed)="register()"></app-auth-form>
+    <app-auth-form [isRegister]="true" (userConfirmed)="register($event)"></app-auth-form>
 </section>

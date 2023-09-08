@@ -11,6 +11,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // import { DynamicLoaderDirective } from './directive/dynamic-loader.directive';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { HttpClientModule } from '@angular/common/http'; 
+import { AuthService } from './services/auth-service.service';
 
 @NgModule({
   declarations: [
@@ -27,9 +29,10 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     SharedModule,
     BrowserAnimationsModule,
     RouterModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    HttpClientModule,
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

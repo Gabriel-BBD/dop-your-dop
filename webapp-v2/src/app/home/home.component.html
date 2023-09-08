@@ -1,5 +1,45 @@
-<app-header [headerConfig]="headerConfig[headerIndex]"></app-header>
+<app-header *ngIf="headerConfig" [headerConfig]="headerConfig[headerIndex]"></app-header>
 <!-- ^^ must emit(_button clicked) -->
-<section class="main-container">
+<section class="main-container" *ngIf="tabConfig">
   <app-tab-generator style="height: 500px;" [stepperConfig]="tabConfig" (tabChanged)="doIt($event)"></app-tab-generator>
 </section>
+
+<!-- Pop-up dialog -->
+<div class="popup-dialog" *ngIf="isVisible">
+  <div class="popup-content" style="display: flex; flex-direction: column; background: #212121">
+
+    <form [formGroup]="myForm" style="display: flex; flex-direction: column; background: #212121">
+      <mat-form-field>
+        <input
+        matInput
+        [placeholder]="'Drink'"
+        formControlName="drink"
+        required
+        />
+        <mat-error *ngIf="myForm.get('drink')?.hasError('required')">Drink is required.</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input
+        matInput
+        [placeholder]="'How Many :\)'"
+        formControlName="quantity"
+        required
+        />
+        <mat-error *ngIf="myForm.get('quantity')?.hasError('required')">Be Honest.</mat-error>
+      </mat-form-field>
+    </form>
+    <div>
+      
+      <button (click)="submit()" style="width: fit-content;" class="centre-self primary-font primary-bg accent-button"  >Submit</button>
+      <button (click)="close()" style="width: fit-content;" class="centre-self primary-font primary-bg accent-button">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- <button 
+mat-stroked-button 
+color="accent" 
+class="accent-button" 
+style="width: fit-content; padding: 0px 2em; margin-left: auto; margin-right: auto;"
+(click)="submit()">Submit</button> -->
